@@ -1,0 +1,32 @@
+.table-head{
+    padding-top: 20px;
+    text-align: center;
+}
+
+.page-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+    /* align-items: center;     */
+    height: 100vh;   
+}
+
+.table-container {
+    max-width: 100%;
+    max-height: 500px;
+    overflow-x: auto;
+    overflow-y: auto;
+    width: auto;  /* Set the width as needed or use a fixed width */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+    vertical-align: top;
+}
