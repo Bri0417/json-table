@@ -1,3 +1,34 @@
+// $(document).ready(function () {
+//   $.getJSON("one_planet_community.json", function (data) {
+//     console.log(data);
+//     generateTable(data);
+//   });
+// });
+
+// function generateTable(data) {
+//   var tableBody = $("#dynamic-table tbody");
+//   tableBody.empty();
+
+//   // Loop through the JSON data
+//   $.each(data.users, function (index, item) {
+//     var row = $("<tr>");
+
+//     //table cell for each piece of data
+//     row.append($("<td>").text(item.id));
+//     row.append($("<td>").text(item.title));
+//     row.append($("<td>").text(item.path));
+//     row.append($("<td>").text(item.user_type));
+//     row.append($("<td>").text(item.subject));
+//     row.append($("<td>").text(item.country));
+//     row.append($("<td>").text(item.short_content));
+//     row.append($("<td>").text(item.field_of_research));
+//     row.append($("<td>").text(item.learningpartner));
+//     row.append($("<td>").text(item.image));
+//     // Append the row to the table body
+//     tableBody.append(row);
+//   });
+// }
+
 $(document).ready(function () {
   $.getJSON("one_planet_community.json", function (data) {
     console.log(data);
@@ -7,8 +38,8 @@ $(document).ready(function () {
     $("#dynamic-table thead th").each(function (index) {
       $(this).on("click", function () {
         var isAscending = $(this).hasClass("asc");
-        sortTable(index, !isAscending, data); // Toggle sorting order
-        updateArrows($(this), !isAscending); // Update arrows based on new sort order
+        sortTable(index, !isAscending, data); // Toggle the sorting order
+        updateArrows($(this), !isAscending); // Update the arrows
       });
     });
   });
@@ -39,40 +70,34 @@ function generateTable(data) {
   });
 }
 
-function sortTable(columnIndex, isAscending, data) {
+function sortTable(columnIndex, asc, data) {
   var sortedData = data.users.sort(function (a, b) {
-    var aValue = cleanValue(Object.values(a)[columnIndex]);
-    var bValue = cleanValue(Object.values(b)[columnIndex]);
+    var aValue = Object.values(a)[columnIndex];
+    var bValue = Object.values(b)[columnIndex];
 
-    return isAscending ? compareValues(aValue, bValue) : compareValues(bValue, aValue);
+    // Handle case-insensitive sorting
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      aValue = aValue.toLowerCase();
+      bValue = bValue.toLowerCase();
+    }
+
+    if (asc) {
+      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+    } else {
+      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+    }
   });
 
   generateTable({ users: sortedData });
 }
 
-function cleanValue(value) {
-  if (typeof value === 'string') {
-    // Remove special characters and convert to lowercase
-    return value.replace(/[^\w\s]/gi, '').toLowerCase();
-  }
-  return value;
-}
-
-function compareValues(a, b) {
-  if (isNaN(a) || isNaN(b)) {
-    return a.localeCompare(b); // Compare as strings if not numbers
-  }
-  return a - b; // Compare as numbers
-}
-
 function updateArrows(th, isAscending) {
-  // Remove previous arrows and classes
-  $("#dynamic-table thead th").removeClass("asc desc").find(".arrow").remove();
+  $("#dynamic-table thead th").removeClass("asc desc").find(".arrow").remove(); // Remove previous arrows
 
-  // Add the relevant arrow to the clicked header
   if (isAscending) {
-    th.addClass("asc").append(' <span class="arrow up-arrow">&#9650;</span>'); // Up arrow for ascending
+    th.removeClass("desc").addClass("asc").append(' <span class="arrow up-arrow">&#9650;</span>'); // Up arrow
   } else {
-    th.addClass("desc").append(' <span class="arrow down-arrow">&#9660;</span>'); // Down arrow for descending
+    th.removeClass("asc").addClass("desc").append(' <span class="arrow down-arrow">&#9660;</span>'); // Down arrow
   }
 }
+

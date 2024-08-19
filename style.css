@@ -32,12 +32,9 @@ th, td {
 }
 th{
     text-transform: capitalize;
+    cursor: pointer;
 }
 
-th {
-    cursor: pointer;
-  }
-  
   .arrow {
     font-size: 15px;
     margin-left: 5px;
@@ -65,7 +62,9 @@ th {
   th.desc .down-arrow {
     display: inline; /* Show down arrow for descending */
     color: #818181; /* Active color */
-  }
+  } 
+
+  
 /* Mobile View */
 @media (max-width: 768px) {
     table, thead, tbody, th, td, tr {
