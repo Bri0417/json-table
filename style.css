@@ -49,11 +49,23 @@ th {
     display: flex;
     float: right;
 }
-  
-  th.asc .up-arrow, th.desc .down-arrow {
-    color: black; /* Highlight the active arrow */
+.up-arrow {
+    display: none; /* Hide by default */
   }
   
+  .down-arrow {
+    display: none; /* Hide by default */
+  }
+  
+  th.asc .up-arrow {
+    display: inline; /* Show up arrow for ascending */
+    color: rgb(29, 29, 29); /* Active color */
+  }
+  
+  th.desc .down-arrow {
+    display: inline; /* Show down arrow for descending */
+    color: #818181; /* Active color */
+  }
 /* Mobile View */
 @media (max-width: 768px) {
     table, thead, tbody, th, td, tr {

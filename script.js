@@ -7,8 +7,8 @@ $(document).ready(function () {
     $("#dynamic-table thead th").each(function (index) {
       $(this).on("click", function () {
         var isAscending = $(this).hasClass("asc");
-        sortTable(index, isAscending, data);
-        updateArrows($(this), isAscending);
+        sortTable(index, !isAscending, data); // Toggle sorting order
+        updateArrows($(this), !isAscending); // Update arrows based on new sort order
       });
     });
   });
@@ -39,35 +39,40 @@ function generateTable(data) {
   });
 }
 
-function sortTable(columnIndex, asc, data) {
+function sortTable(columnIndex, isAscending, data) {
   var sortedData = data.users.sort(function (a, b) {
-    var aValue = Object.values(a)[columnIndex];
-    var bValue = Object.values(b)[columnIndex];
+    var aValue = cleanValue(Object.values(a)[columnIndex]);
+    var bValue = cleanValue(Object.values(b)[columnIndex]);
 
-    if (asc) {
-      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-    } else {
-      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
-    }
+    return isAscending ? compareValues(aValue, bValue) : compareValues(bValue, aValue);
   });
 
   generateTable({ users: sortedData });
 }
 
+function cleanValue(value) {
+  if (typeof value === 'string') {
+    // Remove special characters and convert to lowercase
+    return value.replace(/[^\w\s]/gi, '').toLowerCase();
+  }
+  return value;
+}
+
+function compareValues(a, b) {
+  if (isNaN(a) || isNaN(b)) {
+    return a.localeCompare(b); // Compare as strings if not numbers
+  }
+  return a - b; // Compare as numbers
+}
+
 function updateArrows(th, isAscending) {
-  // Remove previous arrows
+  // Remove previous arrows and classes
   $("#dynamic-table thead th").removeClass("asc desc").find(".arrow").remove();
 
-  // Add both arrows to the clicked header
-  var upArrow = ' <span class="arrow up-arrow"><i class="fa-solid fa-sort-up"></i></span>'; // Up arrow
-  var downArrow = ' <span class="arrow down-arrow"><i class="fa-solid fa-sort-down"></i></span>'; // Down arrow
-
-  th.append(upArrow + downArrow);
-
-  // Highlight the active sorting direction
+  // Add the relevant arrow to the clicked header
   if (isAscending) {
-    th.addClass("desc").find(".down-arrow").css("color", "blue"); // Highlight down arrow
+    th.addClass("asc").append(' <span class="arrow up-arrow">&#9650;</span>'); // Up arrow for ascending
   } else {
-    th.addClass("asc").find(".up-arrow").css("color", "blue"); // Highlight up arrow
+    th.addClass("desc").append(' <span class="arrow down-arrow">&#9660;</span>'); // Down arrow for descending
   }
 }
