@@ -16,7 +16,7 @@
     max-height: 500px;
     overflow-x: auto;
     overflow-y: auto;
-    width: auto;  /* Set the width as needed or use a fixed width */
+    width: auto;
 }
 
 table {
@@ -29,4 +29,83 @@ th, td {
     text-align: left;
     border: 1px solid #ddd;
     vertical-align: top;
+}
+th{
+    text-transform: capitalize;
+}
+
+th {
+    cursor: pointer;
+  }
+  
+  .arrow {
+    font-size: 15px;
+    margin-left: 5px;
+    color: lightgray;
+  }
+  
+  .up-arrow, .down-arrow {
+    color: lightgray;
+    display: flex;
+    float: right;
+}
+  
+  th.asc .up-arrow, th.desc .down-arrow {
+    color: black; /* Highlight the active arrow */
+  }
+  
+/* Mobile View */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        margin: 0 0 1rem 0;
+    }
+
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+    }
+
+    td:before {
+        position: absolute;
+        top: 0;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        content: attr(data-label); 
+    }
+}
+
+
+/* Laptop (1025px to 1440px) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+    th, td {
+        padding: 10px;
+        font-size: 18px; 
+    }
+
+    .table-container {
+        padding: 20px;
+    }
+    .page-container {
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+        /* align-items: center;     */
+        height: 50vh;   
+    }
 }
