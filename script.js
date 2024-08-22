@@ -1,7 +1,7 @@
 $(document).ready(function () {
   $.getJSON("one_planet_community.json", function (data) {
     console.log(data);
-    populateCountryDropdown(data);
+    populateDropdowns(data); // Updated to populate all dropdowns
     generateTable(data);
 
     // Add click event to the table headers for sorting
@@ -17,15 +17,36 @@ $(document).ready(function () {
     $("#search-btn").on("click", function () {
       filterTable(data);
     });
+
+    // Add keydown event to the search input for Enter key
+    $("#common-search").on("keydown", function (e) {
+      if (e.key === "Enter") { // Enter key pressed
+        e.preventDefault(); // Prevent any default action
+        filterTable(data);
+      }
+    });
   });
 });
 
-function populateCountryDropdown(data) {
+function populateDropdowns(data) {
   var countries = new Set(data.users.map(user => user.country));
+  var userTypes = new Set(data.users.map(user => user.user_type));
+  var subjects = new Set(data.users.map(user => user.subject));
+
   var countryFilter = $("#country-filter");
+  var userTypeFilter = $("#user-type-filter");
+  var subjectFilter = $("#subject-filter");
 
   countries.forEach(function (country) {
     countryFilter.append($("<option>").val(country).text(country));
+  });
+
+  userTypes.forEach(function (userType) {
+    userTypeFilter.append($("<option>").val(userType).text(userType));
+  });
+
+  subjects.forEach(function (subject) {
+    subjectFilter.append($("<option>").val(subject).text(subject));
   });
 }
 
@@ -87,15 +108,19 @@ function updateArrows(th, isAscending) {
 
 function filterTable(data) {
   var selectedCountry = $("#country-filter").val().toLowerCase();
+  var selectedUserType = $("#user-type-filter").val().toLowerCase();
+  var selectedSubject = $("#subject-filter").val().toLowerCase();
   var searchQuery = $("#common-search").val().toLowerCase();
 
   var filteredData = data.users.filter(function (user) {
-    var matchesCountry = selectedCountry === "" || user.country.toLowerCase() === selectedCountry;
-    var matchesSearch = Object.values(user).some(function (value) {
+    var matchesCountry = !selectedCountry || user.country.toLowerCase() === selectedCountry;
+    var matchesUserType = !selectedUserType || user.user_type.toLowerCase() === selectedUserType;
+    var matchesSubject = !selectedSubject || user.subject.toLowerCase() === selectedSubject;
+    var matchesSearch = !searchQuery || Object.values(user).some(function (value) {
       return value && value.toString().toLowerCase().includes(searchQuery);
     });
 
-    return matchesCountry && matchesSearch;
+    return matchesCountry && matchesUserType && matchesSubject && matchesSearch;
   });
 
   generateTable({ users: filteredData });
