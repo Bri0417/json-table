@@ -1,37 +1,7 @@
-// $(document).ready(function () {
-//   $.getJSON("one_planet_community.json", function (data) {
-//     console.log(data);
-//     generateTable(data);
-//   });
-// });
-
-// function generateTable(data) {
-//   var tableBody = $("#dynamic-table tbody");
-//   tableBody.empty();
-
-//   // Loop through the JSON data
-//   $.each(data.users, function (index, item) {
-//     var row = $("<tr>");
-
-//     //table cell for each piece of data
-//     row.append($("<td>").text(item.id));
-//     row.append($("<td>").text(item.title));
-//     row.append($("<td>").text(item.path));
-//     row.append($("<td>").text(item.user_type));
-//     row.append($("<td>").text(item.subject));
-//     row.append($("<td>").text(item.country));
-//     row.append($("<td>").text(item.short_content));
-//     row.append($("<td>").text(item.field_of_research));
-//     row.append($("<td>").text(item.learningpartner));
-//     row.append($("<td>").text(item.image));
-//     // Append the row to the table body
-//     tableBody.append(row);
-//   });
-// }
-
 $(document).ready(function () {
   $.getJSON("one_planet_community.json", function (data) {
     console.log(data);
+    populateCountryDropdown(data);
     generateTable(data);
 
     // Add click event to the table headers for sorting
@@ -42,8 +12,22 @@ $(document).ready(function () {
         updateArrows($(this), !isAscending); // Update the arrows
       });
     });
+
+    // Add click event to the search button for filtering
+    $("#search-btn").on("click", function () {
+      filterTable(data);
+    });
   });
 });
+
+function populateCountryDropdown(data) {
+  var countries = new Set(data.users.map(user => user.country));
+  var countryFilter = $("#country-filter");
+
+  countries.forEach(function (country) {
+    countryFilter.append($("<option>").val(country).text(country));
+  });
+}
 
 function generateTable(data) {
   var tableBody = $("#dynamic-table tbody");
@@ -101,3 +85,18 @@ function updateArrows(th, isAscending) {
   }
 }
 
+function filterTable(data) {
+  var selectedCountry = $("#country-filter").val().toLowerCase();
+  var searchQuery = $("#common-search").val().toLowerCase();
+
+  var filteredData = data.users.filter(function (user) {
+    var matchesCountry = selectedCountry === "" || user.country.toLowerCase() === selectedCountry;
+    var matchesSearch = Object.values(user).some(function (value) {
+      return value && value.toString().toLowerCase().includes(searchQuery);
+    });
+
+    return matchesCountry && matchesSearch;
+  });
+
+  generateTable({ users: filteredData });
+}

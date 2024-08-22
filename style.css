@@ -47,22 +47,18 @@ th{
     float: right;
 }
 .up-arrow {
-    display: none; /* Hide by default */
-  }
+    display: none; }
   
   .down-arrow {
-    display: none; /* Hide by default */
-  }
+    display: none;}
   
   th.asc .up-arrow {
-    display: inline; /* Show up arrow for ascending */
-    color: rgb(29, 29, 29); /* Active color */
-  }
+    display: inline;
+    color: rgb(29, 29, 29); }
   
   th.desc .down-arrow {
-    display: inline; /* Show down arrow for descending */
-    color: #818181; /* Active color */
-  } 
+    display: inline; 
+    color: #818181;}
 
   
 /* Mobile View */
