@@ -1,8 +1,11 @@
 $(document).ready(function () {
-  $.getJSON("one_planet_community.json", function (data) {
+  var data; // Store data for filtering and sorting
+
+  $.getJSON("one_planet_community.json", function (jsonData) {
+    data = jsonData; // Store data
     console.log(data);
-    populateDropdowns(data); // Updated to populate all dropdowns
     generateTable(data);
+    populateFilters(data);
 
     // Add click event to the table headers for sorting
     $("#dynamic-table thead th").each(function (index) {
@@ -13,42 +16,19 @@ $(document).ready(function () {
       });
     });
 
-    // Add click event to the search button for filtering
-    $("#search-btn").on("click", function () {
-      filterTable(data);
+    // Search button click event
+    $("#search-button").on("click", function () {
+      applyFilters(data);
     });
 
-    // Add keydown event to the search input for Enter key
-    $("#common-search").on("keydown", function (e) {
-      if (e.key === "Enter") { // Enter key pressed
-        e.preventDefault(); // Prevent any default action
-        filterTable(data);
+    // Input field Enter key press event
+    $("#search-input").on("keypress", function (e) {
+      if (e.which === 13) { // Enter key pressed
+        applyFilters(data);
       }
     });
   });
 });
-
-function populateDropdowns(data) {
-  var countries = new Set(data.users.map(user => user.country));
-  var userTypes = new Set(data.users.map(user => user.user_type));
-  var subjects = new Set(data.users.map(user => user.subject));
-
-  var countryFilter = $("#country-filter");
-  var userTypeFilter = $("#user-type-filter");
-  var subjectFilter = $("#subject-filter");
-
-  countries.forEach(function (country) {
-    countryFilter.append($("<option>").val(country).text(country));
-  });
-
-  userTypes.forEach(function (userType) {
-    userTypeFilter.append($("<option>").val(userType).text(userType));
-  });
-
-  subjects.forEach(function (subject) {
-    subjectFilter.append($("<option>").val(subject).text(subject));
-  });
-}
 
 function generateTable(data) {
   var tableBody = $("#dynamic-table tbody");
@@ -73,6 +53,50 @@ function generateTable(data) {
     // Append the row to the table body
     tableBody.append(row);
   });
+}
+
+function populateFilters(data) {
+  var countries = new Set();
+  var subjects = new Set();
+  var userTypes = new Set();
+
+  $.each(data.users, function (index, item) {
+    countries.add(item.country);
+    subjects.add(item.subject);
+    userTypes.add(item.user_type);
+  });
+
+  populateDropdown("#filter-country", Array.from(countries));
+  populateDropdown("#filter-subject", Array.from(subjects));
+  populateDropdown("#filter-user-type", Array.from(userTypes));
+}
+
+function populateDropdown(selector, items) {
+  var dropdown = $(selector);
+  dropdown.append('<option value="">Select</option>');
+  $.each(items, function (index, item) {
+    dropdown.append('<option value="' + item + '">' + item + '</option>');
+  });
+}
+
+function applyFilters(data) {
+  var countryFilter = $("#filter-country").val();
+  var subjectFilter = $("#filter-subject").val();
+  var userTypeFilter = $("#filter-user-type").val();
+  var searchText = $("#search-input").val().toLowerCase();
+
+  var filteredData = data.users.filter(function (item) {
+    var countryMatch = countryFilter === "" || item.country === countryFilter;
+    var subjectMatch = subjectFilter === "" || item.subject === subjectFilter;
+    var userTypeMatch = userTypeFilter === "" || item.user_type === userTypeFilter;
+    var searchMatch = searchText === "" || Object.values(item).some(function (value) {
+      return value.toString().toLowerCase().includes(searchText);
+    });
+
+    return countryMatch && subjectMatch && userTypeMatch && searchMatch;
+  });
+
+  generateTable({ users: filteredData });
 }
 
 function sortTable(columnIndex, asc, data) {
@@ -104,24 +128,4 @@ function updateArrows(th, isAscending) {
   } else {
     th.removeClass("asc").addClass("desc").append(' <span class="arrow down-arrow">&#9660;</span>'); // Down arrow
   }
-}
-
-function filterTable(data) {
-  var selectedCountry = $("#country-filter").val().toLowerCase();
-  var selectedUserType = $("#user-type-filter").val().toLowerCase();
-  var selectedSubject = $("#subject-filter").val().toLowerCase();
-  var searchQuery = $("#common-search").val().toLowerCase();
-
-  var filteredData = data.users.filter(function (user) {
-    var matchesCountry = !selectedCountry || user.country.toLowerCase() === selectedCountry;
-    var matchesUserType = !selectedUserType || user.user_type.toLowerCase() === selectedUserType;
-    var matchesSubject = !selectedSubject || user.subject.toLowerCase() === selectedSubject;
-    var matchesSearch = !searchQuery || Object.values(user).some(function (value) {
-      return value && value.toString().toLowerCase().includes(searchQuery);
-    });
-
-    return matchesCountry && matchesUserType && matchesSubject && matchesSearch;
-  });
-
-  generateTable({ users: filteredData });
 }

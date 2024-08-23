@@ -14,31 +14,19 @@
     <div class="container">
       <h1 class="table-head">Dynamic Table</h1>
       <div class="row page-container">
-        <div class="filter-container">
-          <label for="country-filter">Filter by Country:</label>
-          <select id="country-filter">
-            <option value="">All Countries</option>
-            <!-- Options will be populated dynamically -->
+        <div class="filters">
+          <select id="filter-country" class="filter-dropdown">
+            <option value="">Select Country</option>
           </select>
-
-          <label for="user-type-filter">Filter by User Type:</label>
-          <select id="user-type-filter">
-            <option value="">All User Types</option>
-            <!-- Options will be populated dynamically -->
+          <select id="filter-subject" class="filter-dropdown">
+            <option value="">Select Subject</option>
           </select>
-
-          <label for="subject-filter">Filter by Subject:</label>
-          <select id="subject-filter">
-            <option value="">All Subjects</option>
-            <!-- Options will be populated dynamically -->
+          <select id="filter-user-type" class="filter-dropdown">
+            <option value="">Select User Type</option>
           </select>
-      
-          <label for="common-search">Search:</label>
-          <input type="text" id="common-search" placeholder="Search..." />
-          <button id="search-btn">Search</button>
+          <input type="text" id="search-input" placeholder="Search..." />
+          <button id="search-button">Search</button>
         </div>
-  
-        
         <div class="table-container">
           <table id="dynamic-table" class="table">
             <thead class="thead-dark">
@@ -60,15 +48,13 @@
         </div>
       </div>
     </div>
+    
+    
     <script
-      src="https://code.jquery.com/jquery-3.7.1.min.js"
-      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://kit.fontawesome.com/7de3164da5.js"
-      crossorigin="anonymous"
-    ></script>
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/7de3164da5.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="script.js"></script>
